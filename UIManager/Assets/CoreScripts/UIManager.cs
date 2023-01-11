@@ -2,13 +2,9 @@ using System.Collections.Generic;
 
 namespace Assets.CoreScripts
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class UIManager
     {
         private static UIManager s_Instance;
-
         public static UIManager Instance
         {
             get
@@ -43,7 +39,7 @@ namespace Assets.CoreScripts
             }
             else
             {
-                DoShow(_uiRootDict[(int)name], uIData);
+                _uiRootDict[(int)name]?.InitData(_headUI, uIData);
             }
         }
 
@@ -54,24 +50,33 @@ namespace Assets.CoreScripts
                 uiRoot.Hide();
         }
 
+        public void HideAll()
+        {
+            HideAll(_headUI);
+        }
+
+        private BaseUIRoot HideAll(BaseUIRoot uiRoot)
+        {
+            if (uiRoot.Next != null)
+            {
+                var target = HideAll(uiRoot.Next);
+                target.Hide();
+                return target.Last;    
+            }
+            else
+            {
+                return uiRoot;
+            }
+        }
+
         private void OnLoadCompleted(BaseUIRoot uIRoot, UIData uIData)
         {
             _uiRootDict[(int)uIData.Name] = uIRoot;
-
+            uIRoot.OnCreate();
             if (_headUI == null)
                 _headUI = uIRoot;
-            else
-                _headUI.Add(uIRoot);
 
-            DoShow(uIRoot, uIData);
-        }
-
-        private void DoShow(BaseUIRoot uIRoot, UIData uIData)
-        {
-            if (uIRoot == null)
-                return;
-            uIRoot.InitData(uIData);
-            uIRoot.Show();
+            uIRoot?.InitData(_headUI, uIData);
         }
     }
 }
