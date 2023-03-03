@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('init') {
       steps {
-        echo '"Clean workspace(${WORK_SPACE})"'
+        echo "Clean workspace(${WORK_SPACE})"
         dir(path: "${WORK_SPACE}") {
           sh 'git clean -f -d -x -e /[Ll]ibrary/'
         }
@@ -13,6 +13,6 @@ pipeline {
 
   }
   environment {
-    WORK_SPACE = '${WORKSPACE}'.replace("\\", "/")
+    WORK_SPACE = "${WORKSPACE}".replace("\\", "/")
   }
 }
